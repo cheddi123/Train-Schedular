@@ -19,10 +19,11 @@
    var trainName = "";
    var destination  = "";
    var frequency = "";
-   var nextArrival = "";
-   var minutesAway = "";
-
-
+   var nextArrival ="";
+   
+   var minutes_start="" ;
+   var time_converted="";
+var  minutes_difference=""
    
    // Capture Button Click
    $("#add-train-info").on("click", function(event) {
@@ -32,6 +33,21 @@
     trainName=$("#trainName").val().trim();  
     destination=$("#destination").val().trim();
     frequency=$("#frequency").val().trim();
+    
+     minutes_start = $("#first-train-time").val().trim();
+     time_converted = moment(minutes_start,"HH:mm").format("HH:mm")
+       console.log(minutes_start);
+       console.log(time_converted);
+
+       minutes_difference = moment().diff(moment(time_converted,"HH:mm"),"minutes");
+       console.log(minutes_difference)
+       var time_remaining = frequency-(minutes_difference%frequency);
+       console.log(time_remaining);
+        var current_time = moment().format("hh:mm")
+       var nextArrival= moment().add(time_remaining,"minutes")
+       console.log(current_time)
+       console.log(moment(nextArrival).format("hh:mm:A"))
+
 
    if(trainName !==""){
 
@@ -41,6 +57,7 @@
         nameOfTrain: trainName,
        nameOfDestination: destination,
        nameOfFrequency:  frequency,
+       time_remaining,
        dateAdded:  firebase.database.ServerValue.TIMESTAMP
       };     
 
@@ -54,6 +71,7 @@ dataRef.ref().push(newTrainInfo);
 $("#trainName").val("")
  $("#destination").val("")
  $("#frequency").val("")
+ $("#first-train-time").val("")
 
  
  });
@@ -68,12 +86,14 @@ dataRef.ref().on("child_added", function(childSnapshot) {
  var trainName = childSnapshot.val().nameOfTrain;
  var trainDestination = childSnapshot.val().nameOfDestination;
  var trainFrequency = childSnapshot.val().nameOfFrequency;
-
+ var timeRemaining = childSnapshot.val().time_remaining;
 // Create the new row
 var newRow = $("<tr>").append(
     $("<td>").text(trainName),
     $("<td>").text(trainDestination),
     $("<td>").text(trainFrequency),
+    $("<td>").text(""),
+    $("<td>").text(timeRemaining),
   );
 // Append the new row to the table
 $("#train-info-display > tbody").append(newRow),
