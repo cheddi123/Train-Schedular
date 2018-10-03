@@ -42,11 +42,13 @@ var  minutes_difference=""
        minutes_difference = moment().diff(moment(time_converted,"HH:mm"),"minutes");
        console.log(minutes_difference)
        var time_remaining = frequency-(minutes_difference%frequency);
+       var update_time_remaining = setInterval(time_remaining,60000)
        console.log(time_remaining);
         var current_time = moment().format("hh:mm")
        var nextArrival= moment().add(time_remaining,"minutes")
+       var arrivalTime = moment(nextArrival).format("hh:mm:A")
        console.log(current_time)
-       console.log(moment(nextArrival).format("hh:mm:A"))
+       console.log(arrivalTime)
 
 
    if(trainName !==""){
@@ -57,7 +59,8 @@ var  minutes_difference=""
         nameOfTrain: trainName,
        nameOfDestination: destination,
        nameOfFrequency:  frequency,
-       time_remaining,
+       time_remaining:update_time_remaining,
+       arrivalTime, 
        dateAdded:  firebase.database.ServerValue.TIMESTAMP
       };     
 
@@ -87,12 +90,13 @@ dataRef.ref().on("child_added", function(childSnapshot) {
  var trainDestination = childSnapshot.val().nameOfDestination;
  var trainFrequency = childSnapshot.val().nameOfFrequency;
  var timeRemaining = childSnapshot.val().time_remaining;
+ var trainNextArrival = childSnapshot.val().arrivalTime;
 // Create the new row
 var newRow = $("<tr>").append(
     $("<td>").text(trainName),
     $("<td>").text(trainDestination),
     $("<td>").text(trainFrequency),
-    $("<td>").text(""),
+    $("<td>").text(trainNextArrival),
     $("<td>").text(timeRemaining),
   );
 // Append the new row to the table
