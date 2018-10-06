@@ -17,6 +17,7 @@ firebase.initializeApp(config);
 
 var dataRef = firebase.database();
 
+
 $("#timeDisplay").html(moment().format("hh:mm: A"))
 
 // Capture Button Click
@@ -62,7 +63,8 @@ $("#add-train-info").on("click", function (event) {
 // 3. Create Firebase event for adding employee to the database and a row in the html when a user adds an entry
 
 dataRef.ref().on("child_added", function (childSnapshot) {
-  console.log(childSnapshot.val());
+  // console.log(childSnapshot.val());
+ console.log(childSnapshot.val())
 
   //train info
 
@@ -88,7 +90,17 @@ dataRef.ref().on("child_added", function (childSnapshot) {
   // var arrivalTime = moment(nextArrival).format("hh:mm:A") // gets the arrival time in this normal time formal
   // console.log( " The current time is : " + current_time)
   console.log(" the next arrival time is : " + nextArrival)
+  
+  
+// delete button dynamically created
+var deleteRow = $("<button>").addClass("btn btn-danger").text("delete");
 
+ $(deleteRow).on("click",function(){ 
+destination.remove,
+  console.log("you clicked me")
+  
+})
+    
   // Create the new row
   var newRow = $("<tr>").append(
     $("<td>").text(trainName),
@@ -96,6 +108,7 @@ dataRef.ref().on("child_added", function (childSnapshot) {
     $("<td>").text(frequency),
     $("<td>").text(nextArrival),
     $("<td>").text(time_remaining),
+    $("<td>").append(deleteRow),
   );
   // Append the new row to the table
   $("#train-info-display > tbody").append(newRow),
@@ -115,9 +128,10 @@ setInterval(update, 60000)
 
 
 function update() {
-
+ // empty the contents of the body tag
   $("#train-info-display > tbody").empty(),
 
+  // displays the time
   $("#timeDisplay").html(moment().format("hh:mm: A"))
 
     dataRef.ref().on("child_added", function (childSnapshot) {
@@ -148,8 +162,11 @@ function update() {
       // console.log( " The current time is : " + current_time)
       console.log(" the next arrival time is : " + nextArrival)
 
-      //  newTrainInfo.empty();
+      // delete button dynamically created
+      var deleteRow = $("<button>").addClass("btn btn-danger").text("delete")
+      $(deleteRow).on("click",function(){ childSnapshot.delete()})
 
+     
       // Create the new row
       var newRow = $("<tr>").append(
         $("<td>").text(trainName),
@@ -157,6 +174,8 @@ function update() {
         $("<td>").text(frequency),
         $("<td>").text(nextArrival),
         $("<td>").text(time_remaining),
+        $("<td>").append(deleteRow),
+       
       );
       // Append the new row to the table
       $("#train-info-display > tbody").append(newRow),
