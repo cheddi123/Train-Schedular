@@ -60,73 +60,12 @@ $("#add-train-info").on("click", function (event) {
 });
 
 
-// 3. Create Firebase event for adding employee to the database and a row in the html when a user adds an entry
 
-dataRef.ref().on("child_added", function (childSnapshot) {
-  // console.log(childSnapshot.val());
- console.log(childSnapshot.val())
-
-  //train info
-
-  var trainName = childSnapshot.val().nameOfTrain;
-  var destination = childSnapshot.val().nameOfDestination;
-  var frequency = childSnapshot.val().nameOfFrequency;
-  var firstTime = childSnapshot.val().nameOFfirstTime;
-
-  var time_converted = moment(firstTime, "HH:mm").subtract(1, "years")
-  console.log(time_converted)
+snapshot();
+setInterval(snapshot, 60000)
 
 
-  // diffence in minutes between the times
-  var minutes_difference = moment().diff(moment(time_converted), "minutes");
-  console.log(minutes_difference)
-
-  // minutes from the time of arrival
-  var time_remaining = frequency - (minutes_difference % frequency);
-  console.log(" The time remainig before arrival time is : " + time_remaining);
-
-  // next train arrival time
-  var nextArrival = moment().add(time_remaining, "minutes").format("hh:mm:A") // gets the arrival time in minutes
-  // var arrivalTime = moment(nextArrival).format("hh:mm:A") // gets the arrival time in this normal time formal
-  // console.log( " The current time is : " + current_time)
-  console.log(" the next arrival time is : " + nextArrival)
-  
-  
-// delete button dynamically created
-var deleteRow = $("<button>").addClass("btn btn-danger").text("delete");
-
- $(deleteRow).on("click",function(){ 
-  console.log("you clicked me")
-  
-})
-    
-  // Create the new row
-  var newRow = $("<tr>").append(
-    $("<td>").text(trainName),
-    $("<td>").text(destination),
-    $("<td>").text(frequency),
-    $("<td>").text(nextArrival),
-    $("<td>").text(time_remaining),
-    $("<td>").append(deleteRow),
-  );
-  // Append the new row to the table
-  $("#train-info-display > tbody").append(newRow),
-
-
-    function (errorObject) {
-      console.log("The read failed: " + errorObject.code);
-    }
-
-});
-
-
-// setInterval(function () { $("#timeDisplay").html(moment().format("hh:mm:ss:A")) }, 1000)
-// var minuteInterval = moment().
-
-setInterval(update, 60000)
-
-
-function update() {
+function snapshot() {
  // empty the contents of the body tag
   $("#train-info-display > tbody").empty(),
 
