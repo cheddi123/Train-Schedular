@@ -96,7 +96,6 @@ dataRef.ref().on("child_added", function (childSnapshot) {
 var deleteRow = $("<button>").addClass("btn btn-danger").text("delete");
 
  $(deleteRow).on("click",function(){ 
-destination.remove,
   console.log("you clicked me")
   
 })

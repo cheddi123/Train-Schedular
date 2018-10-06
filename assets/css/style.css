@@ -1,5 +1,10 @@
 body{
-    background-image:url(https://img.theweek.in/content/dam/week/news/biztech/2018/february/train-20-railways.jpg);
+    background-image:url(../images/train2_bg.jpg);
     background-repeat:round
     
+}
+
+.jumbotron{
+    background-image:url(../images/train3.jpg);
+    background-repeat:repeat
 }
