@@ -66,72 +66,72 @@ setInterval(snapshot, 60000)
 
 
 function snapshot() {
- // empty the contents of the body tag
+  // empty the contents of the body tag
   $("#train-info-display > tbody").empty(),
 
-  // displays the time
-  $("#timeDisplay").html(moment().format("hh:mm: A"))
+    // displays the time
+    $("#timeDisplay").html(moment().format("llll")).css('color','aqua')
+ 
+  dataRef.ref().on("child_added", function (childSnapshot) {
+    console.log(childSnapshot.val());
 
-    dataRef.ref().on("child_added", function (childSnapshot) {
-      console.log(childSnapshot.val());
+    //train info
 
-      //train info
+    var trainName = childSnapshot.val().nameOfTrain;
+    var destination = childSnapshot.val().nameOfDestination;
+    var frequency = childSnapshot.val().nameOfFrequency;
+    var firstTime = childSnapshot.val().nameOFfirstTime;
 
-      var trainName = childSnapshot.val().nameOfTrain;
-      var destination = childSnapshot.val().nameOfDestination;
-      var frequency = childSnapshot.val().nameOfFrequency;
-      var firstTime = childSnapshot.val().nameOFfirstTime;
+    var time_converted = moment(firstTime, "HH:mm").subtract(1, "years")
+    console.log(time_converted)
 
-      var time_converted = moment(firstTime, "HH:mm").subtract(1, "years")
-      console.log(time_converted)
+    var child_key = childSnapshot.key; // variable to get child key
 
-      var key = childSnapshot.key; // variable to get child key
+    // diffence in minutes between the times
+    var minutes_difference = moment().diff(moment(time_converted), "minutes");
+    console.log(minutes_difference)
 
-      // diffence in minutes between the times
-      var minutes_difference = moment().diff(moment(time_converted), "minutes");
-      console.log(minutes_difference)
+    // minutes from the time of arrival
+    var time_remaining = frequency - (minutes_difference % frequency);
+    console.log(" The time remainig before arrival time is : " + time_remaining);
 
-      // minutes from the time of arrival
-      var time_remaining = frequency - (minutes_difference % frequency);
-      console.log(" The time remainig before arrival time is : " + time_remaining);
+    // next train arrival time
+    var nextArrival = moment().add(time_remaining, "minutes").format("hh:mm:A") // gets the arrival time in minutes
+    // var arrivalTime = moment(nextArrival).format("hh:mm:A") // gets the arrival time in this normal time formal
+    // console.log( " The current time is : " + current_time)
+    console.log(" the next arrival time is : " + nextArrival)
 
-      // next train arrival time
-      var nextArrival = moment().add(time_remaining, "minutes").format("hh:mm:A") // gets the arrival time in minutes
-      // var arrivalTime = moment(nextArrival).format("hh:mm:A") // gets the arrival time in this normal time formal
-      // console.log( " The current time is : " + current_time)
-      console.log(" the next arrival time is : " + nextArrival)
-
-      // delete button dynamically created
-      var deleteRow = $("<button>").addClass("btn btn-danger delete").text("delete").attr("data-key",key)
-      $(".delete").on("click" , function(){
-        console.log("click me")
-       var keyref = $(this).attr("data-key");
-        dataRef.ref().child(keyref).remove();
-        window.location.reload();
-        })
-
-     
-      // Create the new row
-      var newRow = $("<tr>").append(
-        $("<td>").text(trainName),
-        $("<td>").text(destination),
-        $("<td>").text(frequency),
-        $("<td>").text(nextArrival),
-        $("<td>").text(time_remaining),
-        $("<td>").append(deleteRow),
-       
-      );
-      // Append the new row to the table
-      $("#train-info-display > tbody").append(newRow),
+    // delete button dynamically created
+    var deleteRow = $("<button>").addClass("btn btn-danger delete").text("delete").attr("data-key", child_key)
+    $(deleteRow).on("click", function () {
+      console.log("click me")
+      var keyref = $(this).attr("data-key");
+      dataRef.ref().child(keyref).remove();
+      window.location.reload();
+    })
 
 
-        function (errorObject) {
-          console.log("The read failed: " + errorObject.code);
-        }
+    // Create the new row
+    var newRow = $("<tr>").append(
+      $("<td>").text(trainName),
+      $("<td>").text(destination),
+      $("<td>").text(frequency),
+      $("<td>").text(nextArrival),
+      $("<td>").text(time_remaining),
+      $("<td>").append(deleteRow),
+
+    );
+    // Append the new row to the table
+    $("#train-info-display > tbody").append(newRow),
+
+
+      function (errorObject) {
+        console.log("The read failed: " + errorObject.code);
+      }
 
 
 
-    });
+  });
 
 }
 
