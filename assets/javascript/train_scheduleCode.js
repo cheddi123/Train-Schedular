@@ -85,6 +85,7 @@ function snapshot() {
       var time_converted = moment(firstTime, "HH:mm").subtract(1, "years")
       console.log(time_converted)
 
+      var key = childSnapshot.key; // variable to get child key
 
       // diffence in minutes between the times
       var minutes_difference = moment().diff(moment(time_converted), "minutes");
@@ -101,8 +102,13 @@ function snapshot() {
       console.log(" the next arrival time is : " + nextArrival)
 
       // delete button dynamically created
-      var deleteRow = $("<button>").addClass("btn btn-danger").text("delete")
-      $(deleteRow).on("click",function(){ childSnapshot.delete()})
+      var deleteRow = $("<button>").addClass("btn btn-danger delete").text("delete").attr("data-key",key)
+      $(".delete").on("click" , function(){
+        console.log("click me")
+       var keyref = $(this).attr("data-key");
+        dataRef.ref().child(keyref).remove();
+        window.location.reload();
+        })
 
      
       // Create the new row
